@@ -44,5 +44,12 @@ class DataBase:
                 return await cursor.fetchall()
 
     async def close_connection(self):
-        if self.connection:
-            await self.connection.close()
+        if self.connection is not None:
+            print(type(self.connection))
+            self.connection.close()
+
+    async def show_modules_by_id(self, user_id):
+        sql = f"SELECT * FROM Modules WHERE user_id={user_id}"
+        modules = self.fetch_sql(sql)
+        print(modules)
+
