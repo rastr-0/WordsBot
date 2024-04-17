@@ -107,12 +107,7 @@ async def set_module_description(msg: types.Message, state: FSMContext):
 
             response = """
 Модуль успешно создан\U0001F3C6
-Теперь выбери как будут добавлены слова в модуль на кнопках ниже:
-\t\t\U000025AB Вручную
-\t\t\U000025AB Переведенные слова в Google документе
-\t\t\U000025AB Переведенные слова в .txt и .xlsx документах
-\t\t\U000025AB Добавить слова в модуль позже
-"""
+Теперь выбери как будут добавлены слова в модуль на кнопках ниже:"""
             await state.clear()
             await msg.answer(response, reply_markup=Menu.add_words())
         except aiomysql.OperationalError as e:
@@ -127,7 +122,7 @@ async def set_module_description(msg: types.Message, state: FSMContext):
 
 @router.message(F.text == "Добавить слова позже\U000023F3")
 async def handle_add_words_later_case(msg: types.Message):
-    response = """Модуль успешно создан и ты можешь в любой момент добавить в него слова\U0001F642"""
+    response = """Ты можешь в любой момент вернуться к модулю и добавить в него слова\U0001F642"""
     await msg.answer(response, reply_markup=Menu.main_actions())
 
 
@@ -149,5 +144,23 @@ async def handle_add_words_manually(msg: types.Message):
 @router.message(F.text == "Мои модули\U0001F5C3")
 async def my_modules(msg: types.Message):
     user_id = msg.from_user.id
-    modules = db.show_modules_by_id(user_id)
+    await db.connect_to_db()
+    try:
+        response_msg = "Список ваших модулей:\n"
+        # already cleaned information and ready to be sent in text message
+        modules = await db.show_modules_by_id(user_id)
+        if modules is not None:
+            for module in modules:
+                response_msg += f"\U0001F194: {module['id']}"
+                response_msg += f"\U0001F4D1 Название: {module['name']}"
+                if len(module) == 3:
+                    response_msg += f"\U0001F4DD Описание: {module['description']}"
 
+        await msg.answer(response_msg)
+        await msg.answer("Вы можете выбрать модуль для дальнейших действий введя его "
+                         "\U0001F4D1 название либо \U0001F194")
+    except aiomysql.OperationalError as e:
+        await msg.answer("Не вышло показать модули\U0001F61E")
+        logging.log(logging.ERROR, f"Error adding new description: {e}")
+    finally:
+        await db.close_connection()

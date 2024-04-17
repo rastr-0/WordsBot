@@ -45,11 +45,21 @@ class DataBase:
 
     async def close_connection(self):
         if self.connection is not None:
-            print(type(self.connection))
             self.connection.close()
 
     async def show_modules_by_id(self, user_id):
         sql = f"SELECT * FROM Modules WHERE user_id={user_id}"
-        modules = self.fetch_sql(sql)
-        print(modules)
+        modules = await self.fetch_sql(sql)
+        cleaned_modules = []
+        for module in modules:
+            module_dict = {
+                "id": module[0],
+                "name": module[2]
+            }
+            if module[3] is not None:
+                module_dict["description"] = module[3]
+            cleaned_modules.append(module_dict)
+        if len(cleaned_modules) > 0:
+            return cleaned_modules
+        return None
 
