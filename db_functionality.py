@@ -63,3 +63,11 @@ class DataBase:
             return cleaned_modules
         return None
 
+    @staticmethod
+    async def write_txt_file(file):
+        pass
+
+    @staticmethod
+    async def write_xlsx_file(file):
+        pass
+
