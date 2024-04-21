@@ -3,18 +3,22 @@ from aiogram import types
 
 class Menu:
     @staticmethod
+    def generate_keyboard(buttons):
+        keyboard = types.ReplyKeyboardMarkup(
+            keyboard=buttons,
+            resize_keyboard=True,
+            one_time_keyboard=True
+        )
+        return keyboard
+
+    @staticmethod
     def main_actions():
         kb = [
             [types.KeyboardButton(text="Мои модули\U0001F5C3")],
             [types.KeyboardButton(text="Создать модуль\U0001F6E0")],
             [types.KeyboardButton(text="Заметки\U0001F4DD")]
         ]
-        keyboard = types.ReplyKeyboardMarkup(
-            keyboard=kb,
-            resize_keyboard=True,
-            one_time_keyboard=True
-        )
-        return keyboard
+        return Menu.generate_keyboard(kb)
 
     @staticmethod
     def module_actions():
@@ -24,12 +28,7 @@ class Menu:
             [types.KeyboardButton(text="Ассоциативное соединение слов")],
             [types.KeyboardButton(text="Письменный перевод")]
         ]
-        keyboard = types.ReplyKeyboardMarkup(
-            keyboard=kb,
-            resize_keyboard=True,
-            one_time_keyboard=True
-        )
-        return keyboard
+        return Menu.generate_keyboard(kb)
 
     @staticmethod
     def add_words():
@@ -39,9 +38,12 @@ class Menu:
             [types.KeyboardButton(text="Вручную\U0000270D")],
             [types.KeyboardButton(text="Добавить слова позже\U000023F3")]
         ]
-        keyboard = types.ReplyKeyboardMarkup(
-            keyboard=kb,
-            resize_keyboard=True,
-            one_time_keyboard=True
-        )
-        return keyboard
+        return Menu.generate_keyboard(kb)
+
+    @staticmethod
+    def get_file():
+        kb = [
+            [types.KeyboardButton(text=".txt файл")],
+            [types.KeyboardButton(text=".xlsx файл")]
+        ]
+        return Menu.generate_keyboard(kb)
